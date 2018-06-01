@@ -64,6 +64,10 @@ final class EnvironmentConverter {
 	 * Converts the given {@code environment} to a {@link StandardEnvironment}. If the
 	 * environment is already a {@code StandardEnvironment} and is not a
 	 * {@link ConfigurableWebEnvironment} no conversion is performed and it is returned
+	 *
+	 * 将给定的“环境”转换为“标准环境”。
+	 * 如果环境已经是StandardEnvironment并且不是可配置的WebEnvironment，则不执行转换并返回它
+	 *
 	 * unchanged.
 	 * @param environment The Environment to convert
 	 * @return The converted Environment
@@ -71,9 +75,12 @@ final class EnvironmentConverter {
 	StandardEnvironment convertToStandardEnvironmentIfNecessary(
 			ConfigurableEnvironment environment) {
 		if (environment instanceof StandardEnvironment
+				//不是org.springframework.web.context.ConfigurableWebEnvironment类型的一个实例
 				&& !isWebEnvironment(environment, this.classLoader)) {
 			return (StandardEnvironment) environment;
 		}
+		//new 一个StandardEnvironment，设置profiles，conversionService，
+		//并将environment 复制到对象中
 		return convertToStandardEnvironment(environment);
 	}
 

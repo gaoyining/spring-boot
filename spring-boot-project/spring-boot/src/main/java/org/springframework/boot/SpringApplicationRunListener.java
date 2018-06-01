@@ -43,6 +43,9 @@ public interface SpringApplicationRunListener {
 	/**
 	 * Called once the environment has been prepared, but before the
 	 * {@link ApplicationContext} has been created.
+	 *
+	 * 一旦环境已经准备好，但在{@link ApplicationContext}创建之前调用。
+	 *
 	 * @param environment the environment
 	 */
 	void environmentPrepared(ConfigurableEnvironment environment);
@@ -57,6 +60,9 @@ public interface SpringApplicationRunListener {
 	/**
 	 * Called once the application context has been loaded but before it has been
 	 * refreshed.
+	 *
+	 * 一旦应用程序上下文已被加载但在刷新之前调用。
+	 *
 	 * @param context the application context
 	 */
 	void contextLoaded(ConfigurableApplicationContext context);

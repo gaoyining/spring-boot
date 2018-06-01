@@ -56,6 +56,7 @@ public @interface SpringBootApplication {
 
 	/**
 	 * Exclude specific auto-configuration classes such that they will never be applied.
+	 * 排除特定的自动配置类，从而永远不会应用它们。
 	 * @return the classes to exclude
 	 */
 	@AliasFor(annotation = EnableAutoConfiguration.class)
@@ -64,6 +65,7 @@ public @interface SpringBootApplication {
 	/**
 	 * Exclude specific auto-configuration class names such that they will never be
 	 * applied.
+	 * 排除特定的自动配置类名称，使它们永远不会被应用。
 	 * @return the class names to exclude
 	 * @since 1.3.0
 	 */
@@ -73,6 +75,7 @@ public @interface SpringBootApplication {
 	/**
 	 * Base packages to scan for annotated components. Use {@link #scanBasePackageClasses}
 	 * for a type-safe alternative to String-based package names.
+	 * 用于扫描注释组件的基本软件包。 使用{@link #scanBasePackageClasses}为基于字符串的包名称提供类型安全的替代方法。
 	 * @return base packages to scan
 	 * @since 1.3.0
 	 */
@@ -85,6 +88,9 @@ public @interface SpringBootApplication {
 	 * <p>
 	 * Consider creating a special no-op marker class or interface in each package that
 	 * serves no purpose other than being referenced by this attribute.
+	 *
+	 * {@link #scanBasePackages}的类型安全替代方法，用于指定扫描注释组件的软件包。 将扫描指定的每个类的包。
+	 * <p>考虑在每个包中创建一个特殊的无操作标记类或接口，除了被此属性引用外，其他用途都没有用处。
 	 * @return base packages to scan
 	 * @since 1.3.0
 	 */

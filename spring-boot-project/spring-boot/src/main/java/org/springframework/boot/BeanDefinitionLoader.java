@@ -123,6 +123,7 @@ class BeanDefinitionLoader {
 	 */
 	public int load() {
 		int count = 0;
+		//
 		for (Object source : this.sources) {
 			count += load(source);
 		}

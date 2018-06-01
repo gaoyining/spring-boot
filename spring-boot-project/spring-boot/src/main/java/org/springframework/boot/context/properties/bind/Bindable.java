@@ -31,6 +31,8 @@ import org.springframework.util.ObjectUtils;
 /**
  * Source that can be bound by a {@link Binder}.
  *
+ * 可以被绑定的资源。
+ *
  * @param <T> The source type
  * @author Phillip Webb
  * @author Madhura Bhave
@@ -155,6 +157,9 @@ public final class Bindable<T> {
 
 	/**
 	 * Create an updated {@link Bindable} instance with an existing value.
+	 *
+	 * 使用现有值创建更新的{@link Bindable}实例。
+	 *
 	 * @param existingValue the existing value
 	 * @return an updated {@link Bindable}
 	 */

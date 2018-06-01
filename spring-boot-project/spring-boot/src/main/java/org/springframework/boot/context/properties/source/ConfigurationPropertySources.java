@@ -65,6 +65,13 @@ public final class ConfigurationPropertySources {
 	 * <p>
 	 * The attached resolver will dynamically track any additions or removals from the
 	 * underlying {@link Environment} property sources.
+	 *
+	 * 将{@link ConfigurationPropertySource}支持附加到指定的{@linkEnvironment}。
+	 * 将环境管理的每个{@link PropertySource}调整为{@link ConfigurationPropertySource}，
+	 * 并允许使用{@ Configuration ConfigurationPropertyName配置属性名称}解析传统的
+	 * {@link PropertySourcesPropertyResolver}调用。
+	 * <p>附加的解析器将动态跟踪底层{@link Environment}属性源的任何添加或删除。
+	 *
 	 * @param environment the source environment (must be an instance of
 	 * {@link ConfigurableEnvironment})
 	 * @see #get(Environment)
@@ -73,12 +80,16 @@ public final class ConfigurationPropertySources {
 		Assert.isInstanceOf(ConfigurableEnvironment.class, environment);
 		MutablePropertySources sources = ((ConfigurableEnvironment) environment)
 				.getPropertySources();
+		//获得源中的所有的configurationProperties
 		PropertySource<?> attached = sources.get(ATTACHED_PROPERTY_SOURCE_NAME);
 		if (attached != null && attached.getSource() != sources) {
+			//configurationProperties不为空，并且环境变量不只有configurationProperties，移除configurationProperties
 			sources.remove(ATTACHED_PROPERTY_SOURCE_NAME);
 			attached = null;
 		}
 		if (attached == null) {
+			//如果configurationProperties为空，将configurationProperties的优先级调成最高，
+			// 实现为先删除，在添加在list索引为0的位置
 			sources.addFirst(new ConfigurationPropertySourcesPropertySource(
 					ATTACHED_PROPERTY_SOURCE_NAME,
 					new SpringConfigurationPropertySources(sources)));
