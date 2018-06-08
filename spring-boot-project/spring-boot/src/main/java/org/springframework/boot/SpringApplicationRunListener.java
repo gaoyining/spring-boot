@@ -71,6 +71,10 @@ public interface SpringApplicationRunListener {
 	 * The context has been refreshed and the application has started but
 	 * {@link CommandLineRunner CommandLineRunners} and {@link ApplicationRunner
 	 * ApplicationRunners} have not been called.
+	 *
+	 * 上下文已刷新，应用程序已启动，但尚未调用
+	 * {@link CommandLineRunner CommandLineRunners}和{@link ApplicationRunner ApplicationRunners}。
+	 *
 	 * @param context the application context.
 	 * @since 2.0.0
 	 */
@@ -80,6 +84,11 @@ public interface SpringApplicationRunListener {
 	 * Called immediately before the run method finishes, when the application context has
 	 * been refreshed and all {@link CommandLineRunner CommandLineRunners} and
 	 * {@link ApplicationRunner ApplicationRunners} have been called.
+	 *
+	 * 在run方法完成之前立即调用，
+	 * 当应用程序上下文已刷新并且已调用了所有的
+	 * CommandLineRunner CommandLineRunner和ApplicationRunner ApplicationRunners。
+	 *
 	 * @param context the application context.
 	 * @since 2.0.0
 	 */

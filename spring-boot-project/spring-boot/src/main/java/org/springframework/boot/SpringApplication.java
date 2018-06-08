@@ -348,7 +348,7 @@ public class SpringApplication {
 			//打印Banner
 			Banner printedBanner = printBanner(environment);
 			//------------------------关键方法----------------------
-			//启动ApplicationContext
+			//根据webApplicationType的值，创建ApplicationContext
 			context = createApplicationContext();
 			//------------------------关键方法----------------------
 			//创建故障分析器，获得所有的实现SpringBootExceptionReporter接口的类
@@ -358,14 +358,21 @@ public class SpringApplication {
 			//------------------------关键方法----------------------
 			prepareContext(context, environment, listeners, applicationArguments,
 					printedBanner);
+			//-----------------------关键方法------------------------
+			//调用AbstractApplicationContext的refresh方法，初始化ApplicationContext容器
 			refreshContext(context);
+			//-----------------------关键方法------------------------
+			//留给子类进行扩展，空实现
 			afterRefresh(context, applicationArguments);
 			stopWatch.stop();
 			if (this.logStartupInfo) {
 				new StartupInfoLogger(this.mainApplicationClass)
 						.logStarted(getApplicationLog(), stopWatch);
 			}
+			//-----------------------关键方法------------------------
+			//调用所有的SpringApplicationRunListener的started方法
 			listeners.started(context);
+			//初始化ApplicationContext容器之后进行刷新
 			callRunners(context, applicationArguments);
 		}
 		catch (Throwable ex) {
@@ -374,6 +381,8 @@ public class SpringApplication {
 		}
 
 		try {
+			//-----------------------关键方法------------------------
+			//调用所有的SpringApplicationRunListener的running方法
 			listeners.running(context);
 		}
 		catch (Throwable ex) {
@@ -448,6 +457,7 @@ public class SpringApplication {
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
 		//-------------------关键方法------------------------
+		//参数为main方法设置的启动类
 		load(context, sources.toArray(new Object[0]));
 		listeners.contextLoaded(context);
 	}
@@ -486,6 +496,7 @@ public class SpringApplication {
 		// Use names and ensure unique to protect against duplicates
 		//使用名称并确保唯一以防止重复
 		//spring.factories文件的value，文件可以是factories或者是xml
+		//根据type的类型，获得spring.factories里面的所有符合条件的类型
 		Set<String> names = new LinkedHashSet<>(
 				SpringFactoriesLoader.loadFactoryNames(type, classLoader));
 		//循环实例化对象
@@ -672,6 +683,10 @@ public class SpringApplication {
 	 * Strategy method used to create the {@link ApplicationContext}. By default this
 	 * method will respect any explicitly set application context or application context
 	 * class before falling back to a suitable default.
+	 *
+	 * 用于创建{@link ApplicationContext}的策略方法。
+	 * 默认情况下，这个方法在回到合适的默认值之前将尊重任何显式设置的应用程序上下文或应用程序上下文类
+	 *
 	 * @return the application context (not yet refreshed)
 	 * @see #setApplicationContextClass(Class)
 	 */
@@ -687,6 +702,7 @@ public class SpringApplication {
 					contextClass = Class.forName(DEFAULT_REACTIVE_WEB_CONTEXT_CLASS);
 					break;
 				default:
+					//非web情况下，实例化"org.springframework.context.annotation.AnnotationConfigApplicationContext"
 					contextClass = Class.forName(DEFAULT_CONTEXT_CLASS);
 				}
 			}
@@ -809,7 +825,9 @@ public class SpringApplication {
 			logger.debug(
 					"Loading source " + StringUtils.arrayToCommaDelimitedString(sources));
 		}
+		//创建BeanDefinitionLoader对象
 		BeanDefinitionLoader loader = createBeanDefinitionLoader(
+				//获得bean的注册表
 				getBeanDefinitionRegistry(context), sources);
 		if (this.beanNameGenerator != null) {
 			loader.setBeanNameGenerator(this.beanNameGenerator);
@@ -848,6 +866,9 @@ public class SpringApplication {
 
 	/**
 	 * Get the bean definition registry.
+	 *
+	 * 获取bean定义注册表。
+	 *
 	 * @param context the application context
 	 * @return the BeanDefinitionRegistry if it can be determined
 	 */
@@ -884,6 +905,9 @@ public class SpringApplication {
 
 	/**
 	 * Called after the context has been refreshed.
+	 *
+	 * 在上下文刷新后调用。
+	 *
 	 * @param context the application context
 	 * @param args the application arguments
 	 */
@@ -893,9 +917,13 @@ public class SpringApplication {
 
 	private void callRunners(ApplicationContext context, ApplicationArguments args) {
 		List<Object> runners = new ArrayList<>();
+		//加入所有的ApplicationRunner类型对象
 		runners.addAll(context.getBeansOfType(ApplicationRunner.class).values());
+		//加入所有的CommandLineRunner类型对象
 		runners.addAll(context.getBeansOfType(CommandLineRunner.class).values());
+		//排序
 		AnnotationAwareOrderComparator.sort(runners);
+		//调用runner方法
 		for (Object runner : new LinkedHashSet<>(runners)) {
 			if (runner instanceof ApplicationRunner) {
 				callRunner((ApplicationRunner) runner, args);

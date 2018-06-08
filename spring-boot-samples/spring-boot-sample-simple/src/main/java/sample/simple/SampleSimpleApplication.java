@@ -42,7 +42,7 @@ public class SampleSimpleApplication implements CommandLineRunner {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(SampleSimpleApplication.class, args);
+		new SpringApplication(SampleSimpleApplication.class).run(SampleSimpleApplication.class, args);
 	}
 
 }

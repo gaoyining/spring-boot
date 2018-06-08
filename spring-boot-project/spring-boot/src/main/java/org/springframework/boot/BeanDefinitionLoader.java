@@ -125,6 +125,7 @@ class BeanDefinitionLoader {
 		int count = 0;
 		//
 		for (Object source : this.sources) {
+			//所有的参数循环load
 			count += load(source);
 		}
 		return count;
@@ -133,6 +134,7 @@ class BeanDefinitionLoader {
 	private int load(Object source) {
 		Assert.notNull(source, "Source must not be null");
 		if (source instanceof Class<?>) {
+			//启动走的这里
 			return load((Class<?>) source);
 		}
 		if (source instanceof Resource) {
@@ -151,11 +153,13 @@ class BeanDefinitionLoader {
 		if (isGroovyPresent()
 				&& GroovyBeanDefinitionSource.class.isAssignableFrom(source)) {
 			// Any GroovyLoaders added in beans{} DSL can contribute beans here
+			//在beans中添加的任何GroovyLoaders {} DSL可以在这里贡献bean
 			GroovyBeanDefinitionSource loader = BeanUtils.instantiateClass(source,
 					GroovyBeanDefinitionSource.class);
 			load(loader);
 		}
 		if (isComponent(source)) {
+			//---------------------关键方法-------------------------
 			this.annotatedReader.register(source);
 			return 1;
 		}

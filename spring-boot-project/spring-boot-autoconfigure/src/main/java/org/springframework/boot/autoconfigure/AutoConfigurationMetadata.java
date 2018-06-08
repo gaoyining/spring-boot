@@ -21,6 +21,8 @@ import java.util.Set;
 /**
  * Provides access to meta-data written by the auto-configure annotation processor.
  *
+ * 提供对由自动配置注释处理器写入的注解的访问。
+ *
  * @author Phillip Webb
  * @since 1.5.0
  */

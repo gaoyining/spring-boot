@@ -59,6 +59,9 @@ import org.springframework.util.StringUtils;
  * auto-configuration}. This class can also be subclassed if a custom variant of
  * {@link EnableAutoConfiguration @EnableAutoConfiguration}. is needed.
  *
+ * {@link DeferredImportSelector}处理{@link EnableAutoConfiguration自动配置}。
+ * 如果自定义变体{@link EnableAutoConfiguration @EnableAutoConfiguration}，该类也可以被分类。 是必要的。
+ *
  * @author Phillip Webb
  * @author Andy Wilkinson
  * @author Stephane Nicoll
@@ -92,13 +95,21 @@ public class AutoConfigurationImportSelector
 		}
 		AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
 				.loadMetadata(this.beanClassLoader);
+		//----------------------关键方法-----------------------
+		// 获得所有EnableAutoConfiguration.class的类
 		AnnotationAttributes attributes = getAttributes(annotationMetadata);
+		// 根据EnableAutoConfiguration.class类型，加载所有的Factories列表
 		List<String> configurations = getCandidateConfigurations(annotationMetadata,
 				attributes);
 		configurations = removeDuplicates(configurations);
+		//返回过滤的列表
 		Set<String> exclusions = getExclusions(annotationMetadata, attributes);
+		//获得需要过滤的
 		checkExcludedClasses(configurations, exclusions);
+		//移除需要
 		configurations.removeAll(exclusions);
+		//-----------------关键方法----------------------
+		//返回过滤后的
 		configurations = filter(configurations, autoConfigurationMetadata);
 		fireAutoConfigurationImportEvents(configurations, exclusions);
 		return StringUtils.toStringArray(configurations);
@@ -121,11 +132,15 @@ public class AutoConfigurationImportSelector
 	/**
 	 * Return the appropriate {@link AnnotationAttributes} from the
 	 * {@link AnnotationMetadata}. By default this method will return attributes for
+	 *
+	 * 从{@link AnnotationMetadata}返回适当的{@link AnnotationAttributes}。 默认情况下，这个方法将返回属性
+	 *
 	 * {@link #getAnnotationClass()}.
 	 * @param metadata the annotation metadata
 	 * @return annotation attributes
 	 */
 	protected AnnotationAttributes getAttributes(AnnotationMetadata metadata) {
+		//在这里写死的寻找EnableAutoConfiguration.class 注解，所以在各个配置文件中配置
 		String name = getAnnotationClass().getName();
 		AnnotationAttributes attributes = AnnotationAttributes
 				.fromMap(metadata.getAnnotationAttributes(name, true));
@@ -148,6 +163,10 @@ public class AutoConfigurationImportSelector
 	 * Return the auto-configuration class names that should be considered. By default
 	 * this method will load candidates using {@link SpringFactoriesLoader} with
 	 * {@link #getSpringFactoriesLoaderFactoryClass()}.
+	 *
+	 * 返回应该考虑的自动配置类名称。
+	 * 默认情况下，此方法将使用带{@link #getSpringFactoriesLoaderFactoryClass（）}的
+	 * {@link SpringFactoriesLoader}加载候选项。
 	 * @param metadata the source metadata
 	 * @param attributes the {@link #getAttributes(AnnotationMetadata) annotation
 	 * attributes}
@@ -155,6 +174,7 @@ public class AutoConfigurationImportSelector
 	 */
 	protected List<String> getCandidateConfigurations(AnnotationMetadata metadata,
 			AnnotationAttributes attributes) {
+		//根据EnableAutoConfiguration.class类型，加载所有的Factories列表
 		List<String> configurations = SpringFactoriesLoader.loadFactoryNames(
 				getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader());
 		Assert.notEmpty(configurations,
@@ -203,6 +223,9 @@ public class AutoConfigurationImportSelector
 
 	/**
 	 * Return any exclusions that limit the candidate configurations.
+	 *
+	 * 返回限制候选配置的任何排除。
+	 *
 	 * @param metadata the source metadata
 	 * @param attributes the {@link #getAttributes(AnnotationMetadata) annotation
 	 * attributes}
@@ -231,11 +254,14 @@ public class AutoConfigurationImportSelector
 	private List<String> filter(List<String> configurations,
 			AutoConfigurationMetadata autoConfigurationMetadata) {
 		long startTime = System.nanoTime();
+		//获得EnableAutoConfiguration.class的类的数组
 		String[] candidates = StringUtils.toStringArray(configurations);
 		boolean[] skip = new boolean[candidates.length];
 		boolean skipped = false;
+		//加载所有的AutoConfigurationImportFilter.class类型
 		for (AutoConfigurationImportFilter filter : getAutoConfigurationImportFilters()) {
 			invokeAwareMethods(filter);
+			//调用OnClassCondition的match方法
 			boolean[] match = filter.match(candidates, autoConfigurationMetadata);
 			for (int i = 0; i < match.length; i++) {
 				if (!match[i]) {
@@ -278,6 +304,7 @@ public class AutoConfigurationImportSelector
 
 	private void fireAutoConfigurationImportEvents(List<String> configurations,
 			Set<String> exclusions) {
+		//获得所有的AutoConfigurationImportListener.class类型
 		List<AutoConfigurationImportListener> listeners = getAutoConfigurationImportListeners();
 		if (!listeners.isEmpty()) {
 			AutoConfigurationImportEvent event = new AutoConfigurationImportEvent(this,

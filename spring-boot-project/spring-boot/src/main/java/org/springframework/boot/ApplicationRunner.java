@@ -34,6 +34,9 @@ public interface ApplicationRunner {
 
 	/**
 	 * Callback used to run the bean.
+	 *
+	 * 用于运行该bean的回调。
+	 *
 	 * @param args incoming application arguments
 	 * @throws Exception on error
 	 */

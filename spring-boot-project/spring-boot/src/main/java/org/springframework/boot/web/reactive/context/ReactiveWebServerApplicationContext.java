@@ -70,6 +70,8 @@ public class ReactiveWebServerApplicationContext
 	protected void onRefresh() {
 		super.onRefresh();
 		try {
+			//--------------------关键方法-----------------
+			//创建webServer
 			createWebServer();
 		}
 		catch (Throwable ex) {
@@ -96,8 +98,10 @@ public class ReactiveWebServerApplicationContext
 	private void createWebServer() {
 		WebServer localServer = this.webServer;
 		if (localServer == null) {
+			//-----------------------关键方法---------------------
 			this.webServer = getWebServerFactory().getWebServer(getHttpHandler());
 		}
+		//空实现，留给子类实现
 		initPropertySources();
 	}
 
@@ -115,10 +119,14 @@ public class ReactiveWebServerApplicationContext
 	 * Return the {@link ReactiveWebServerFactory} that should be used to create the
 	 * reactive web server. By default this method searches for a suitable bean in the
 	 * context itself.
+	 *
+	 * 返回应该用于创建的{@link ReactiveWebServerFactory}
+	 * 反应性Web服务器。 默认情况下，这个方法在上下文本身中搜索合适的bean。
 	 * @return a {@link ReactiveWebServerFactory} (never {@code null})
 	 */
 	protected ReactiveWebServerFactory getWebServerFactory() {
 		// Use bean names so that we don't consider the hierarchy
+		// 使用bean名称，以便我们不考虑层次结构
 		String[] beanNames = getBeanFactory()
 				.getBeanNamesForType(ReactiveWebServerFactory.class);
 		if (beanNames.length == 0) {
